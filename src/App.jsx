@@ -1,13 +1,41 @@
-import { useState } from 'react'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import { useDispatch } from "react-redux";
+import authService from "./AppWrite/Auth";
+import { login, logout } from "./Store/AuthSlice";
+import { Footer, Header } from "./Store/Components/Index";
+import { Outlet } from "react-router-dom";
 
 function App() {
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
-  return (
-    <>
-    <h1>Blog App</h1>
-    </>
-  )
+  useEffect(() => {
+    authService
+      .getCurrentUser()
+      .then((userData) => {
+        if (userData) {
+          dispatch({ login });
+        } else {
+          dispatch({ logout });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+  if (loading) {
+    return(<div className="min-h-screen flex flex-wrap content-between bg-gray-400">
+      <div className="w-full block">
+        <Header/>
+        {/* <main><Outlet/></main> */}
+        <Footer/>
+      </div>
+    </div>)
+  }else{
+    return null
+  }
 }
 
-export default App
+export default App;
