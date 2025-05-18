@@ -3,7 +3,7 @@ import "./App.css";
 import { useDispatch } from "react-redux";
 import authService from "./AppWrite/Auth";
 import { login, logout } from "./Store/AuthSlice";
-import { Footer, Header } from "./Store/Components/Index";
+import { Footer, Header } from "./Components/Index";
 import { Outlet } from "react-router-dom";
 
 function App() {
@@ -15,27 +15,23 @@ function App() {
       .getCurrentUser()
       .then((userData) => {
         if (userData) {
-          dispatch({ login });
+          dispatch(login({ userData }));
         } else {
-          dispatch({ logout });
+          dispatch(logout());
         }
-      })
-      .catch((error) => {
-        console.log(error);
       })
       .finally(() => setLoading(false));
   }, []);
-  if (loading) {
-    return(<div className="min-h-screen flex flex-wrap content-between bg-gray-400">
+
+  return (
+    <div className="min-h-screen flex flex-wrap content-between bg-gray-400">
       <div className="w-full block">
         <Header/>
-        {/* <main><Outlet/></main> */}
+        <main><Outlet/></main>
         <Footer/>
       </div>
-    </div>)
-  }else{
-    return null
-  }
+    </div>
+  );
 }
 
 export default App;

@@ -33,7 +33,7 @@ export class AuthService {
 
   async login({ email, password }) {
     try {
-      return await this.account.createSession(email, password);
+      return await this.account.createEmailPasswordSession(email, password);
     } catch (error) {
       throw error;
     }
@@ -41,13 +41,12 @@ export class AuthService {
 
   async getCurrentUser() {
     try {
-      await this.account.get();
+      const user = await this.account.get();
+      return user;
     } catch (error) {
-      console.log("AppwriteIssue",error);
-      return null
+      console.log("AppwriteIssue");
+      return null;
     }
-
-    return null;
   }
 
   async logOut() {
