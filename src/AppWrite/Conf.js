@@ -92,7 +92,7 @@ export class Service {
       console.log(error);
       return false;
     }
-  }
+  } 
 
   //file upload services
 
@@ -125,5 +125,6 @@ export class Service {
 }
 
 const service = new Service();
+
 
 export default service;
