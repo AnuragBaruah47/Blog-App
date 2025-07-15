@@ -7,7 +7,16 @@ import { useSelector, useDispatch } from "react-redux";
 
 function PostForm({ post }) {
   const navigate = useNavigate();
-  const userData = useSelector((state) => state.user.userData);
+  const userData = useSelector((state) => state.auth.userData);
+  const { register, handleSubmit, watch, setValue, control, getValues } =
+    useForm({
+      defaultValues: {
+        title: post?.tittle || "",
+        slug: post?.slug || "",
+        content: post?.content || "",
+        statusUpdate: post?.statusUpdate || "active",
+      },
+    });
   const submit = async (data) => {
     if (post) {
       const file = data.image[0]
@@ -59,15 +68,6 @@ function PostForm({ post }) {
       subsciption.unsubscribe();
     };
   }, [watch, slugTransform, setValue]);
-  const { register, handleSubmit, watch, setValue, control, getValues } =
-    useForm({
-      defaultValues: {
-        title: post?.tittle || "",
-        slug: post?.slug || "",
-        content: post?.content || "",
-        statusUpdate: post?.statusUpdate || "active",
-      },
-    });
   return (
     <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
       <div className="w-2/3 px-2">

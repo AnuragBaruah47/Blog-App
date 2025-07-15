@@ -15,12 +15,16 @@ function Login() {
     setError("");
     try {
       const session = await authService.login(data);
+      console.log("session is here",session);
       if (session) {
+        await new Promise(res=>setTimeout(res,200))
         const userData = await authService.getCurrentUser();
         if (userData) {
-          console.log(userData);
-          dispatch(authLogin(userData));
+          console.log(userData,"i am userData");
+          dispatch(authLogin(userData));  // first problem 
           navigate("/");
+        }else{
+          setError("Log in succedded but failed to fetch the user data")
         }
       }
     } catch (error) {
@@ -67,7 +71,7 @@ function Login() {
             label="password"
             {...register("password", { required: true })}
           />
-          <Button type="submit" className="w-full">
+          <Button type="submit"  className="w-full">
             Sign in
           </Button>
         </div>

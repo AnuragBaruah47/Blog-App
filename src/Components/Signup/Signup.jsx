@@ -16,12 +16,19 @@ function Signup() {
     console.log(data, "data");
     try {
       const userData = await authService.createAccount(data);
+      console.log(userData, "inside signup");
       if (userData) {
+        await new Promise(res=>setTimeout(res,300))
         const userData = await authService.getCurrentUser();
-        if (userData) dispatch(login(userData));
-        navigate("/");
+        if (userData) {
+          dispatch(login(userData));
+          navigate("/");
+        }else{
+          setError("Sign Up succedded but failed to get the userData")
+        }
       }
     } catch (error) {
+      console.log(error);
       setError(error.message);
     }
   };
@@ -51,7 +58,7 @@ function Signup() {
           <div className="space-y-5">
             <Input
               label="FullName:"
-              placeholder="ENter Your Full Name"
+              placeholder="Enter Your Full Name"
               {...register("name", {
                 required: true,
               })}
