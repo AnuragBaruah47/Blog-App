@@ -1,6 +1,6 @@
 import config from "../config/config";
 
-import { Client, Account, ID, Query , Databases } from "appwrite";
+import { Client, Account, ID, Query, Databases } from "appwrite";
 
 export class AuthService {
   client = new Client();
@@ -13,7 +13,7 @@ export class AuthService {
       .setProject(config.appwriteProjectID);
 
     this.account = new Account(this.client);
-    this.databases=new Databases(this.client);
+    this.databases = new Databases(this.client);
   }
 
   async createAccount({ email, password, name }) {
@@ -87,11 +87,24 @@ export class AuthService {
         [Query.equal("accountId", userId)]
       );
       console.log(userInfo);
-      
+
       return userInfo.documents[0];
     } catch (error) {
       console.log("Issue in getUserInfo Function");
       return null;
+    }
+  }
+
+  async getAllUser() {
+    try {
+      const allUser = await this.databases.listDocuments(
+        config.appwriteDatabaseID,
+        config.appwriteUserCollectionID
+      );
+      return allUser.documents;
+    } catch (error) {
+      console.log("error", error);
+      return []
     }
   }
 
