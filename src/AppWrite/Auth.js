@@ -1,10 +1,11 @@
 import config from "../config/config";
 
-import { Client, Account, ID, Query } from "appwrite";
+import { Client, Account, ID, Query , Databases } from "appwrite";
 
 export class AuthService {
   client = new Client();
   account;
+  databases;
 
   constructor() {
     this.client
@@ -12,6 +13,7 @@ export class AuthService {
       .setProject(config.appwriteProjectID);
 
     this.account = new Account(this.client);
+    this.databases=new Databases(this.client);
   }
 
   async createAccount({ email, password, name }) {
