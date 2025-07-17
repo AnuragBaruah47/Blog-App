@@ -94,6 +94,7 @@ export class Service {
     }
   } 
 
+
   //file upload services
 
   async uploadFile(file) {
@@ -122,6 +123,7 @@ export class Service {
   getFilePreview(fileID) {
     return this.bucket.getFilePreview(config.appwriteBucketID, fileID);
   }
+
 }
 
 const service = new Service();

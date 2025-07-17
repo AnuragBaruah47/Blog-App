@@ -1,11 +1,10 @@
 import config from "../config/config";
 
-import { Client, Account, ID } from "appwrite";
+import { Client, Account, ID, Query } from "appwrite";
 
 export class AuthService {
   client = new Client();
   account;
-
 
   constructor() {
     this.client
@@ -15,7 +14,6 @@ export class AuthService {
     this.account = new Account(this.client);
   }
 
-
   async createAccount({ email, password, name }) {
     try {
       const userAccount = await this.account.create(
@@ -24,11 +22,27 @@ export class AuthService {
         password,
         name
       );
-      if (userAccount) {
-        return this.login({ email, password });
-      } else {
-        return userAccount;
+      if (!userAccount) {
+        console.log("Account Creation Failed");
+        return null;
       }
+      const login = await this.login({ email, password });
+      if (!login) {
+        console.log("login failed");
+        return null;
+      }
+
+      const newUser = await this.saveUserToDB({
+        accountId: userAccount.$id,
+        Name: userAccount.name,
+        Email: userAccount.email,
+      });
+      if (!newUser) {
+        console.log("Failed to Save UserData In The DataBase");
+        return null;
+      }
+
+      return newUser;
     } catch (error) {
       throw error;
     }
@@ -55,12 +69,50 @@ export class AuthService {
 
   async logOut() {
     try {
-      await this.account.deleteSessions(
-      );
+      await this.account.deleteSessions();
     } catch (error) {
-      if(error?.code !== "401"){
-        throw error
+      if (error?.code !== "401") {
+        throw error;
       }
+    }
+  }
+
+  async getUserInfo(userId) {
+    try {
+      const userInfo = await this.databases.listDocuments(
+        config.appwriteDatabaseID,
+        config.appwriteUserCollectionID,
+        [Query.equal("accountId", userId)]
+      );
+      console.log(userInfo);
+      
+      return userInfo.documents[0];
+    } catch (error) {
+      console.log("Issue in getUserInfo Function");
+      return null;
+    }
+  }
+
+  async saveUserToDB({ accountId, Name, Email }) {
+    try {
+      const users = await this.getUserInfo(accountId);
+      if (users) {
+        return users;
+      } else {
+        const userDataSave = await this.databases.createDocument(
+          config.appwriteDatabaseID,
+          config.appwriteUserCollectionID,
+          ID.unique(),
+          {
+            accountId,
+            Name,
+            Email,
+          }
+        );
+        return userDataSave;
+      }
+    } catch (error) {
+      console.log("Appwrite Service Error tmkc::::  ", error);
     }
   }
 }
