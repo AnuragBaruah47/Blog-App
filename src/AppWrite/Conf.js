@@ -28,11 +28,11 @@ export class Service {
         config.appwriteCollectionID,
         slug,
         {
-          title,
-          content,
-          featuredImage,
-          statusUpdate,
-          userId,
+          Title:title,
+          Content:content,
+          Featuredimage:featuredImage,
+          Status:statusUpdate,
+          Userid:userId,
         }
       );
     } catch (error) {
@@ -47,9 +47,10 @@ export class Service {
         config.appwriteCollectionID,
         slug,
         {
-          title,
-          content,
-          featuredImage,
+          Title:title,
+          Content:content,
+          Featuredimage:featuredImage,
+          Status:statusUpdate,
         }
       );
     } catch (error) {

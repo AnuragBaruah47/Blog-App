@@ -11,10 +11,11 @@ function PostForm({ post }) {
   const { register, handleSubmit, watch, setValue, control, getValues } =
     useForm({
       defaultValues: {
-        title: post?.tittle || "",
+        title: post?.title || "",
         slug: post?.slug || "",
         content: post?.content || "",
         statusUpdate: post?.statusUpdate || "active",
+        userId:post?.userId || ""
       },
     });
   const submit = async (data) => {
@@ -39,7 +40,7 @@ function PostForm({ post }) {
         data.featuredImage = fileId;
         const dbPost = await appwriteService.createPost({
           ...data,
-          userId: userData.$id,
+          userId: userData?.userData.$id,
         });
         if (dbPost) {
           navigate(`/post/${dbPost.$id}`);
@@ -52,8 +53,8 @@ function PostForm({ post }) {
       return value
         .trim()
         .toLowerCase()
-        .replace(/^[a-zA-Z\d\s]+/g, "-")
-        .replace(/\s/g, "-");
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
     } else {
       return "";
     }
@@ -61,7 +62,7 @@ function PostForm({ post }) {
   useEffect(() => {
     const subsciption = watch((value, { name }) => {
       if (name === "title") {
-        setValue("slug".slugTransform(value.title, { shouldValidate: true }));
+        setValue("slug",slugTransform(value.title, { shouldValidate: true }));
       }
     });
     return () => {
