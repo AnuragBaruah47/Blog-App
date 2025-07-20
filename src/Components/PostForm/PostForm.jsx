@@ -8,30 +8,69 @@ import { useSelector, useDispatch } from "react-redux";
 function PostForm({ post }) {
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
-  const { register, handleSubmit, watch, setValue, control, getValues } =
+  const { register, handleSubmit, watch, setValue, control, getValues, reset } =
     useForm({
       defaultValues: {
         title: post?.title || "",
         slug: post?.slug || "",
         content: post?.content || "",
         statusUpdate: post?.statusUpdate || "active",
-        userId:post?.userId || ""
+        userId: post?.userId || ""
       },
     });
+
+  useEffect(() => {
+    if (post) {
+      reset({
+        title: post.Title || "",
+        slug: post.Slug || "",
+        content: post.Content || "",
+        status: post.Status || "active",
+        userId: post.Userid || ""
+      });
+    }
+  }, [post, reset]);
   const submit = async (data) => {
     if (post) {
-      const file = data.image[0]
-        ? appwriteService.uploadFile(data.image[0])
+      const file = data.image && data.image[0]
+        ? await appwriteService.uploadFile(data.image[0])
         : null;
-      if (file) {
-        appwriteService.deletFile(post.featuredImage);
-      }
-      const dbPost = await appwriteService.updatePost(post.$id, {
-        ...data,
-        featuredImage: file ? file.$id : undefined,
-      });
-      if (dbPost) {
-        navigate(`/post/${dbPost.$id}`);
+      // Check if slug has changed
+      const oldSlug = post.Slug;
+      const newSlug = data.slug;
+      if (oldSlug !== newSlug) {
+        // Create new post with new slug
+        const newPost = await appwriteService.createPost({
+          title: data.title,
+          slug: newSlug,
+          content: data.content,
+          featuredImage: file ? file.$id : post.Featuredimage,
+          statusUpdate: data.status,
+          userId: post.Userid,
+        });
+        if (newPost) {
+          // Delete old post
+          await appwriteService.deletePost(post.$id);
+          // Optionally delete old image if replaced
+          if (file && post.Featuredimage) {
+            await appwriteService.deletFile(post.Featuredimage);
+          }
+          navigate(`/post/${newPost.$id}`);
+        }
+      } else {
+        // Normal update
+        if (file && post.Featuredimage) {
+          await appwriteService.deletFile(post.Featuredimage);
+        }
+        const dbPost = await appwriteService.updatePost(post.$id, {
+          title: data.title,
+          content: data.content,
+          featuredImage: file ? file.$id : post.Featuredimage,
+          statusUpdate: data.status,
+        });
+        if (dbPost) {
+          navigate(`/post/${dbPost.$id}`);
+        }
       }
     } else {
       const file = await appwriteService.uploadFile(data.image[0]);
@@ -54,7 +93,7 @@ function PostForm({ post }) {
         .trim()
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
+        .replace(/^-+|-+$/g, "");
     } else {
       return "";
     }
@@ -62,7 +101,7 @@ function PostForm({ post }) {
   useEffect(() => {
     const subsciption = watch((value, { name }) => {
       if (name === "title") {
-        setValue("slug",slugTransform(value.title, { shouldValidate: true }));
+        setValue("slug", slugTransform(value.title), { shouldValidate: true });
       }
     });
     return () => {
@@ -104,11 +143,11 @@ function PostForm({ post }) {
           accept="image/png, image/jpg, image/jpeg, image/gif"
           {...register("image", { required: !post })}
         />
-        {post && (
+        {post && post.Featuredimage && (
           <div className="w-full mb-4">
             <img
-              src={appwriteService.getFilePreview(post.featuredImage)}
-              alt={post.title}
+              src={appwriteService.getFilePreview(post.Featuredimage)}
+              alt={post.Title}
               className="rounded-lg"
             />
           </div>

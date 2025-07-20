@@ -113,7 +113,7 @@ export class Service {
 
   async deletFile(fileID) {
     try {
-      await this.bucket.deleteFile(fileID, config.appwriteBucketID);
+      await this.bucket.deleteFile(config.appwriteBucketID,fileID);
       return true;
     } catch (error) {
       console.log(error);
