@@ -104,7 +104,7 @@ export class AuthService {
       return allUser.documents;
     } catch (error) {
       console.log("error", error);
-      return []
+      return [];
     }
   }
 

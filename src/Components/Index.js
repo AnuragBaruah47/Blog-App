@@ -12,5 +12,6 @@ import Login from "./Login/Login";
 import RTE from "./RTE";
 import PostForm from "./PostForm/PostForm";
 import Authlayout from "./Authlayout"
+import AllUsers from "./AllUsers"
 
-export{Header,Footer,Container,Logo,LogoutButton,Button,Input,Select,Postcard,Signup,Login,RTE,PostForm,Authlayout}
+export{Header,Footer,Container,Logo,LogoutButton,Button,Input,Select,Postcard,Signup,Login,RTE,PostForm,Authlayout,AllUsers}
