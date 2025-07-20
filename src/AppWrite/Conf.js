@@ -122,7 +122,7 @@ export class Service {
   }
 
   getFilePreview(fileID) {
-    return this.bucket.getFilePreview(config.appwriteBucketID, fileID);
+    return this.bucket.getFileView(config.appwriteBucketID, fileID);
   }
 
 }
