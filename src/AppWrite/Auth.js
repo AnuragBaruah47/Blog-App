@@ -130,6 +130,9 @@ export class AuthService {
       console.log("Appwrite Service Error tmkc::::  ", error);
     }
   }
+
+    
+
 }
 
 const authService = new AuthService();

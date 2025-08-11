@@ -4,6 +4,8 @@ import service from "../AppWrite/Conf";
 import { Button, Container } from "../Components/Index";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
+import PostStats from "./PostStats";
+
 
 export default function Post() {
   const [post, setPost] = useState(null);
@@ -55,6 +57,9 @@ export default function Post() {
             </div>
           )}
         </div>
+        {
+          post && <PostStats  post={post}/>
+        }
         <div className="w-full mb-6">
           <h1 className="text-2xl font-bold">{post.Title}</h1>
         </div>

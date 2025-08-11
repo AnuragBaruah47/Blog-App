@@ -125,6 +125,18 @@ export class Service {
     return this.bucket.getFileView(config.appwriteBucketID, fileID);
   }
 
+  // like post
+
+  async likePost(postId,likes){
+    return await this.databases.updateDocument(
+        config.appwriteDatabaseID,
+        config.appwriteCollectionID,
+        postId,{
+          likes
+        }
+    )
+  }
+
 }
 
 const service = new Service();
